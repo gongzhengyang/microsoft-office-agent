@@ -1,27 +1,31 @@
 use std::collections::HashMap;
 
+const MAX_SPLITS: usize = 8;
+
+/// office 日志采用`\t`切割，最多会被切割为8份
 pub fn parse_text(text: &str) -> Vec<HashMap<String, String>> {
     let mut lines = text.lines();
     let first_line = lines.next();
     if first_line.is_none() {
         return vec![];
     }
-    let keys = first_line.unwrap().split('\t').collect::<Vec<&str>>();
-    let keys_len = keys.len();
-    println!("{keys:?}------{keys_len}");
+    let keys = first_line
+        .unwrap()
+        .splitn(MAX_SPLITS, '\t')
+        .collect::<Vec<&str>>();
     let mut results = vec![];
     for line in lines {
-        let mut values = line.split('\t').collect::<Vec<&str>>();
-        if values.len().eq(&keys_len) {
-            // values.append(&mut keys.clone());
-            println!("-----")
+        let values = line.splitn(MAX_SPLITS, '\t').collect::<Vec<&str>>();
+        if values.len().eq(&MAX_SPLITS) {
+            let mut result = HashMap::with_capacity(MAX_SPLITS);
+            for (i, v) in values.iter().enumerate() {
+                result.insert(keys[i].to_owned(), v.to_string());
+            }
+            results.push(result);
         }
-        println!("{values:?}===={}", values.len());
     }
     results
-
 }
-
 
 #[cfg(test)]
 mod tests {
