@@ -19,7 +19,7 @@ pub fn parse_text(text: &str) -> Vec<HashMap<String, String>> {
         if values.len().eq(&MAX_SPLITS) {
             let mut result = HashMap::with_capacity(MAX_SPLITS);
             for (i, v) in values.iter().enumerate() {
-                result.insert(keys[i].to_owned(), v.to_string());
+                result.insert( keys[i].to_owned().replace('\t', "_"), v.to_string());
             }
             results.push(result);
         }

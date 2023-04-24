@@ -40,9 +40,10 @@ async fn append_has_read_log(filepath: &str) {
 
 pub async fn walk_for_logs() -> Vec<HashMap<String, String>> {
     let mut full_log_results = vec![];
-    let mut office_dir = std::env::var("Temp").unwrap();
-    office_dir += r"\Diagnostics";
-    tracing::info!("read in dir {office_dir}");
+    let mut office_dir = std::path::PathBuf::from(&std::env::var("TEMP").unwrap());
+    office_dir.push("Diagnostics");
+
+    tracing::info!("read in dir {}", office_dir.display());
     for entry in walkdir::WalkDir::new(office_dir)
         .into_iter()
         .filter_map(|e| e.ok())

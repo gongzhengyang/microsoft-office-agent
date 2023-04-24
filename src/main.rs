@@ -17,6 +17,12 @@ async fn main() {
         interval.tick().await;
         tracing::info!("begin read office log");
         let results = walk::walk_for_logs().await;
-        println!("{results:?}");
+        let now = chrono::Utc::now().timestamp_millis();
+        let data = serde_json::json!({
+            "dataType": "office",
+            "collectTime": now,
+            "logs": results
+        });
+        println!("{data}");
     }
 }
