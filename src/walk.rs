@@ -1,5 +1,6 @@
 use std::collections::{HashMap, HashSet};
 use std::io::Write;
+use std::path::PathBuf;
 use std::sync::Mutex;
 
 use tokio::sync::OnceCell;
@@ -38,13 +39,10 @@ async fn append_has_read_log(filepath: &str) {
     handle.insert(filepath.to_owned());
 }
 
-pub async fn walk_for_logs() -> Vec<HashMap<String, String>> {
+pub async fn walk_for_logs(dir: PathBuf) -> Vec<HashMap<String, String>> {
     let mut full_log_results = vec![];
-    let mut office_dir = std::path::PathBuf::from(&std::env::var("TEMP").unwrap());
-    office_dir.push("Diagnostics");
 
-    tracing::info!("read in dir {}", office_dir.display());
-    for entry in walkdir::WalkDir::new(office_dir)
+    for entry in walkdir::WalkDir::new(dir)
         .into_iter()
         .filter_map(|e| e.ok())
         .filter(|e| e.file_name().to_str().unwrap().ends_with(".log"))

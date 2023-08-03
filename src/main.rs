@@ -16,7 +16,11 @@ async fn main() {
     loop {
         interval.tick().await;
         tracing::info!("begin read office log");
-        let results = walk::walk_for_logs().await;
+        let mut office_dir = std::path::PathBuf::from(&std::env::var("TEMP").unwrap());
+        office_dir.push("Diagnostics");
+        tracing::info!("read in dir {}", office_dir.display());
+
+        let results = walk::walk_for_logs(office_dir).await;
         let now = chrono::Utc::now().timestamp_millis();
         let data = serde_json::json!({
             "dataType": "office",
